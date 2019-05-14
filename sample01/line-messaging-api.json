@@ -1,0 +1,82 @@
+{
+    "properties": {
+        "events": {
+            "items": {
+                "message": {
+                    "properties": {
+                        "address": {
+                            "type": "string"
+                        },
+                        "fileName": {
+                            "type": "string"
+                        },
+                        "fileSize": {
+                            "type": "number"
+                        },
+                        "id": {
+                            "type": "string"
+                        },
+                        "latitude": {
+                            "type": "number"
+                        },
+                        "longitude": {
+                            "type": "number"
+                        },
+                        "packageId": {
+                            "type": "string"
+                        },
+                        "stickerId": {
+                            "type": "string"
+                        },
+                        "text": {
+                            "type": "string"
+                        },
+                        "title": {
+                            "type": "string"
+                        },
+                        "type": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "postback": {
+                    "properties": {
+                        "data": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "properties": {
+                    "replyToken": {
+                        "type": "string"
+                    },
+                    "source": {
+                        "properties": {
+                            "groupId": {
+                                "type": "string"
+                            },
+                            "type": {
+                                "type": "string"
+                            },
+                            "userId": {
+                                "type": "string"
+                            }
+                        },
+                        "type": "object"
+                    },
+                    "timestamp": {
+                        "type": "number"
+                    },
+                    "type": {
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "type": "array"
+        }
+    },
+    "type": "object"
+}

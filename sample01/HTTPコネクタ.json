@@ -1,0 +1,9 @@
+{
+  "messages": [
+    {
+      "text": "スケジュール登録しました",
+      "type": "text"
+    }
+  ],
+  "replyToken": @{items('For_each')?['replyToken']}
+}
