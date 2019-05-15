@@ -1,0 +1,62 @@
+{
+    "properties": {
+        "destination": {
+            "type": "string"
+        },
+        "events": {
+            "items": {
+                "properties": {
+                    "message": {
+                        "properties": {
+                            "duration": {
+                                "type": "integer"
+                            },
+                            "fileName": {
+                                "type": "string"
+                            },
+                            "id": {
+                                "type": "string"
+                            },
+                            "originalContentUrl": {
+                                "type": "string"
+                            },
+                            "type": {
+                                "type": "string"
+                            }
+                        },
+                        "type": "object"
+                    },
+                    "replyToken": {
+                        "type": "string"
+                    },
+                    "source": {
+                        "properties": {
+                            "type": {
+                                "type": "string"
+                            },
+                            "userId": {
+                                "type": "string"
+                            }
+                        },
+                        "type": "object"
+                    },
+                    "timestamp": {
+                        "type": "integer"
+                    },
+                    "type": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "replyToken",
+                    "type",
+                    "timestamp",
+                    "source"
+                ],
+                "type": "object"
+            },
+            "type": "array"
+        }
+    },
+    "type": "object"
+}

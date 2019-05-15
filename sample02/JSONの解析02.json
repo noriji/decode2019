@@ -1,0 +1,57 @@
+{
+    "properties": {
+        "AudioFileResults": {
+            "items": {
+                "properties": {
+                    "AudioFileName": {
+                        "type": "string"
+                    },
+                    "SegmentResults": {
+                        "items": {
+                            "properties": {
+                                "Duration": {
+                                    "type": "integer"
+                                },
+                                "NBest": {
+                                    "items": {
+                                        "properties": {
+                                            "Confidence": {
+                                                "type": "number"
+                                            },
+                                            "Display": {
+                                                "type": "string"
+                                            },
+                                            "ITN": {
+                                                "type": "string"
+                                            },
+                                            "Lexical": {
+                                                "type": "string"
+                                            },
+                                            "MaskedITN": {
+                                                "type": "string"
+                                            },
+                                            "Words": {}
+                                        },
+                                        "type": "object"
+                                    },
+                                    "type": "array"
+                                },
+                                "Offset": {
+                                    "type": "integer"
+                                },
+                                "RecognitionStatus": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        },
+                        "type": "array"
+                    }
+                },
+                "type": "object"
+            },
+            "type": "array"
+        }
+    },
+    "type": "object"
+}

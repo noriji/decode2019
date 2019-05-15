@@ -1,0 +1,100 @@
+{
+    "items": {
+        "properties": {
+            "createdDateTime": {
+                "type": "string"
+            },
+            "description": {
+                "type": "string"
+            },
+            "id": {
+                "type": "string"
+            },
+            "lastActionDateTime": {
+                "type": "string"
+            },
+            "locale": {
+                "type": "string"
+            },
+            "models": {
+                "items": {
+                    "properties": {
+                        "createdDateTime": {
+                            "type": "string"
+                        },
+                        "datasets": {
+                            "type": "array"
+                        },
+                        "description": {
+                            "type": "string"
+                        },
+                        "id": {
+                            "type": "string"
+                        },
+                        "lastActionDateTime": {
+                            "type": "string"
+                        },
+                        "locale": {
+                            "type": "string"
+                        },
+                        "modelKind": {
+                            "type": "string"
+                        },
+                        "name": {
+                            "type": "string"
+                        },
+                        "properties": {
+                            "properties": {
+                                "Purpose": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        },
+                        "status": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "type": "array"
+            },
+            "name": {
+                "type": "string"
+            },
+            "properties": {
+                "properties": {
+                    "Duration": {
+                        "type": "string"
+                    },
+                    "ProfanityFilterMode": {
+                        "type": "string"
+                    },
+                    "PunctuationMode": {
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "recordingsUrl": {
+                "type": "string"
+            },
+            "resultsUrls": {
+                "properties": {
+                    "channel_0": {
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "status": {
+                "type": "string"
+            },
+            "statusMessage": {
+                "type": "string"
+            }
+        },
+        "type": "object"
+    },
+    "type": "array"
+}
