@@ -7,5 +7,5 @@
     "ProfanityFilterMode": "Masked",
     "PunctuationMode": "DictatedAndAutomatic"
   },
-  "recordingsUrl": "https://speech2textstore.blob.core.windows.net{動的コネクタの「ファイルの一覧Path」を選択}"
+  "recordingsUrl": "https://{自身で作成したBlobストレージ名}.blob.core.windows.net{動的コネクタの「ファイルの一覧Path」を選択}"
 }
