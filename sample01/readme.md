@@ -2,9 +2,11 @@
 
 LINEで送信するスケジュール内容（テキスト）をLogic Apps、Cognitive ServicesのLanguage Understanding（LUIS）を利用してGoogleカレンダーに自動入力します。
 
+![構成図](img/diagram.jpg)
+
 ## 作成手順
 
-今回の仕組みを作成する手順は、以下の3ステップです。
+今回の仕組みを作成する手順は以下です。
 
 1. LINE Messaging APIの登録
 2. Language Understanding（LUIS）の作成
