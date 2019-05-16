@@ -86,7 +86,7 @@ Logic Appsの設定で利用するので、左メニューの「キー」をク�
 
 LINEのボイスメッセージをBlob Storageに格納するワークフローの全体図。
 
-![line-voiceschedule-storageワークフロー全体図](img/sample02-logicflow.jpg)
+![line-voiceschedule-storageワークフロー全体図](img/sample02-logicflow01.jpg)
 
 ## 5-1-1. トリガーの作成（HTTP 要求の受信時）
 
@@ -261,3 +261,9 @@ https://westus.cris.ai/api/speechtotext/v2.0/transcriptions/
 これまでの内容を利用して、Googleカレンダーに登録する部分です。<br>
 内容はsample01の [README.md](sample01/readme.md) を参照してください。
 
+<br>
+<br>
+
+ascii.jpに詳細な手順を記載した記事を寄稿していますので、こちらも参考にされてください。
+
+- [音声認識AIを使ってLINEのボイスメッセージをテキスト変換してみよう](https://ascii.jp/elem/000/001/851/1851643/)
