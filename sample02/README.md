@@ -259,7 +259,7 @@ https://westus.cris.ai/api/speechtotext/v2.0/transcriptions/
 ## 5-2-5. Googleカレンダーに登録
 
 これまでの内容を利用して、Googleカレンダーに登録する部分です。<br>
-内容はsample01の [README.md](sample01/readme.md) を参照してください。
+内容はsample01の [README.md](https://github.com/noriji/decode2019/tree/master/sample01#3-3-1-luis%E3%82%B3%E3%83%8D%E3%82%AF%E3%82%BF) を参照してください。
 
 <br>
 <br>
