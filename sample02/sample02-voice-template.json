@@ -1,0 +1,622 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "workflows_line_voice_schedule_name": {
+            "defaultValue": "line-voice-schedule",
+            "type": "String"
+        },
+        "connections_azureblob_externalid": {
+            "defaultValue": "/subscriptions/[ご自身のサブスクリプションIDに変更]/resourceGroups/decode2019/providers/Microsoft.Web/connections/azureblob",
+            "type": "String"
+        },
+        "connections_googlecalendar_externalid": {
+            "defaultValue": "/subscriptions/[ご自身のサブスクリプションIDに変更]/resourceGroups/decode2019/providers/Microsoft.Web/connections/googlecalendar",
+            "type": "String"
+        },
+        "connections_luis_externalid": {
+            "defaultValue": "/subscriptions/[ご自身のサブスクリプションIDに変更]/resourceGroups/decode2019/providers/Microsoft.Web/connections/luis",
+            "type": "String"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Logic/workflows",
+            "apiVersion": "2017-07-01",
+            "name": "[parameters('workflows_line_voice_schedule_name')]",
+            "location": "westcentralus",
+            "properties": {
+                "state": "Disabled",
+                "definition": {
+                    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "$connections": {
+                            "defaultValue": {},
+                            "type": "Object"
+                        }
+                    },
+                    "triggers": {
+                        "BLOB_が追加または変更されたとき_(プロパティのみ)": {
+                            "recurrence": {
+                                "frequency": "Minute",
+                                "interval": 1
+                            },
+                            "splitOn": "@triggerBody()",
+                            "metadata": {
+                                "JTJmdm9pY2U=": "/voice"
+                            },
+                            "type": "ApiConnection",
+                            "inputs": {
+                                "host": {
+                                    "connection": {
+                                        "name": "@parameters('$connections')['azureblob']['connectionId']"
+                                    }
+                                },
+                                "method": "get",
+                                "path": "/datasets/default/triggers/batch/onupdatedfile",
+                                "queries": {
+                                    "folderId": "JTJmdm9pY2U="
+                                }
+                            }
+                        }
+                    },
+                    "actions": {
+                        "For_each": {
+                            "foreach": "@body('JSON_の解析')",
+                            "actions": {
+                                "For_each_2": {
+                                    "foreach": "@body('JSON_の解析_2')?['AudioFileResults']",
+                                    "actions": {
+                                        "For_each_4": {
+                                            "foreach": "@items('For_each_2')['SegmentResults']",
+                                            "actions": {
+                                                "For_each_3": {
+                                                    "foreach": "@items('For_each_4')?['NBest']",
+                                                    "actions": {
+                                                        "変数の設定(result)": {
+                                                            "runAfter": {},
+                                                            "type": "SetVariable",
+                                                            "inputs": {
+                                                                "name": "result",
+                                                                "value": "@items('For_each_3')?['Display']"
+                                                            }
+                                                        }
+                                                    },
+                                                    "runAfter": {},
+                                                    "type": "Foreach"
+                                                }
+                                            },
+                                            "runAfter": {},
+                                            "type": "Foreach"
+                                        }
+                                    },
+                                    "runAfter": {
+                                        "JSON_の解析_2": [
+                                            "Succeeded"
+                                        ]
+                                    },
+                                    "type": "Foreach"
+                                },
+                                "HTTP": {
+                                    "runAfter": {},
+                                    "type": "Http",
+                                    "inputs": {
+                                        "method": "GET",
+                                        "uri": "@items('For_each')?['resultsUrls']?['channel_0']"
+                                    }
+                                },
+                                "HTTP_2_-_Delete": {
+                                    "runAfter": {
+                                        "For_each_2": [
+                                            "Succeeded"
+                                        ]
+                                    },
+                                    "type": "Http",
+                                    "inputs": {
+                                        "headers": {
+                                            "Content-Type": "application/json",
+                                            "Ocp-Apim-Subscription-Key": "[Ocp-Apim-Subscription-Keyを入力]"
+                                        },
+                                        "method": "DELETE",
+                                        "uri": "https://westus.cris.ai/api/speechtotext/v2.0/transcriptions/@{items('For_each')?['id']}"
+                                    }
+                                },
+                                "JSON_の解析_2": {
+                                    "runAfter": {
+                                        "HTTP": [
+                                            "Succeeded"
+                                        ]
+                                    },
+                                    "type": "ParseJson",
+                                    "inputs": {
+                                        "content": "@body('HTTP')",
+                                        "schema": {
+                                            "properties": {
+                                                "AudioFileResults": {
+                                                    "items": {
+                                                        "properties": {
+                                                            "AudioFileName": {
+                                                                "type": "string"
+                                                            },
+                                                            "SegmentResults": {
+                                                                "items": {
+                                                                    "properties": {
+                                                                        "Duration": {
+                                                                            "type": "integer"
+                                                                        },
+                                                                        "NBest": {
+                                                                            "items": {
+                                                                                "properties": {
+                                                                                    "Confidence": {
+                                                                                        "type": "number"
+                                                                                    },
+                                                                                    "Display": {
+                                                                                        "type": "string"
+                                                                                    },
+                                                                                    "ITN": {
+                                                                                        "type": "string"
+                                                                                    },
+                                                                                    "Lexical": {
+                                                                                        "type": "string"
+                                                                                    },
+                                                                                    "MaskedITN": {
+                                                                                        "type": "string"
+                                                                                    },
+                                                                                    "Words": {}
+                                                                                },
+                                                                                "type": "object"
+                                                                            },
+                                                                            "type": "array"
+                                                                        },
+                                                                        "Offset": {
+                                                                            "type": "integer"
+                                                                        },
+                                                                        "RecognitionStatus": {
+                                                                            "type": "string"
+                                                                        }
+                                                                    },
+                                                                    "type": "object"
+                                                                },
+                                                                "type": "array"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    },
+                                                    "type": "array"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            },
+                            "runAfter": {
+                                "JSON_の解析": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "Foreach",
+                            "runtimeConfiguration": {
+                                "concurrency": {
+                                    "repetitions": 1
+                                }
+                            }
+                        },
+                        "For_each_5": {
+                            "foreach": "@body('Get_prediction')?['entities']",
+                            "actions": {
+                                "スイッチ": {
+                                    "runAfter": {},
+                                    "cases": {
+                                        "ケース": {
+                                            "case": "date",
+                                            "actions": {
+                                                "変数の設定(date)": {
+                                                    "runAfter": {},
+                                                    "type": "SetVariable",
+                                                    "inputs": {
+                                                        "name": "date",
+                                                        "value": "@items('For_each_5')?['entity']"
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "ケース_2": {
+                                            "case": "location",
+                                            "actions": {
+                                                "変数の設定(location)": {
+                                                    "runAfter": {},
+                                                    "type": "SetVariable",
+                                                    "inputs": {
+                                                        "name": "location",
+                                                        "value": "@items('For_each_5')?['entity']"
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "ケース_3": {
+                                            "case": "time",
+                                            "actions": {
+                                                "変数の設定(time)": {
+                                                    "runAfter": {},
+                                                    "type": "SetVariable",
+                                                    "inputs": {
+                                                        "name": "time",
+                                                        "value": "@items('For_each_5')?['entity']"
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "ケース_4": {
+                                            "case": "action",
+                                            "actions": {
+                                                "変数の設定(action)": {
+                                                    "runAfter": {},
+                                                    "type": "SetVariable",
+                                                    "inputs": {
+                                                        "name": "action",
+                                                        "value": "@items('For_each_5')?['entity']"
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "ケース_5": {
+                                            "case": "name",
+                                            "actions": {
+                                                "変数の設定(name)": {
+                                                    "runAfter": {},
+                                                    "type": "SetVariable",
+                                                    "inputs": {
+                                                        "name": "name",
+                                                        "value": "@items('For_each_5')?['entity']"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "default": {
+                                        "actions": {}
+                                    },
+                                    "expression": "@items('For_each_5')?['type']",
+                                    "type": "Switch"
+                                }
+                            },
+                            "runAfter": {
+                                "Get_prediction": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "Foreach"
+                        },
+                        "Get_prediction": {
+                            "runAfter": {
+                                "For_each": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "ApiConnection",
+                            "inputs": {
+                                "host": {
+                                    "connection": {
+                                        "name": "@parameters('$connections')['luis']['connectionId']"
+                                    }
+                                },
+                                "method": "get",
+                                "path": "/luis/v2.0/apps/@{encodeURIComponent('[LUISのAPI Key]')}/",
+                                "queries": {
+                                    "desiredIntent": "Plans",
+                                    "q": "@variables('result')",
+                                    "verbose": true,
+                                    "versionId": "0.1"
+                                }
+                            }
+                        },
+                        "HTTP_-_Speech_to_text(GET)": {
+                            "runAfter": {
+                                "HTTP_-_Speech_to_text(POST)": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "Http",
+                            "inputs": {
+                                "headers": {
+                                    "Content-Type": "application/json",
+                                    "Ocp-Apim-Subscription-Key": "[Ocp-Apim-Subscription-Keyを入力]"
+                                },
+                                "method": "GET",
+                                "uri": "https://westus.cris.ai/api/speechtotext/v2.0/transcriptions"
+                            }
+                        },
+                        "HTTP_-_Speech_to_text(POST)": {
+                            "runAfter": {
+                                "変数を初期化する(result)": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "Http",
+                            "inputs": {
+                                "body": {
+                                    "description": "Speech to textの書き起こし",
+                                    "locale": "ja-JP",
+                                    "models": [],
+                                    "name": "Transcription using locale ja-JP",
+                                    "properties": {
+                                        "ProfanityFilterMode": "Masked",
+                                        "PunctuationMode": "DictatedAndAutomatic"
+                                    },
+                                    "recordingsUrl": "https://[ご自身で設定したBlobStorage名].blob.core.windows.net@{triggerBody()?['Path']}"
+                                },
+                                "headers": {
+                                    "Content-Type": "application/json",
+                                    "Ocp-Apim-Subscription-Key": "[Ocp-Apim-Subscription-Keyを入力]"
+                                },
+                                "method": "POST",
+                                "uri": "https://westus.cris.ai/api/speechtotext/v2.0/transcriptions"
+                            }
+                        },
+                        "JSON_の解析": {
+                            "runAfter": {
+                                "HTTP_-_Speech_to_text(GET)": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "ParseJson",
+                            "inputs": {
+                                "content": "@body('HTTP_-_Speech_to_text(GET)')",
+                                "schema": {
+                                    "items": {
+                                        "properties": {
+                                            "createdDateTime": {
+                                                "type": "string"
+                                            },
+                                            "description": {
+                                                "type": "string"
+                                            },
+                                            "id": {
+                                                "type": "string"
+                                            },
+                                            "lastActionDateTime": {
+                                                "type": "string"
+                                            },
+                                            "locale": {
+                                                "type": "string"
+                                            },
+                                            "models": {
+                                                "items": {
+                                                    "properties": {
+                                                        "createdDateTime": {
+                                                            "type": "string"
+                                                        },
+                                                        "datasets": {
+                                                            "type": "array"
+                                                        },
+                                                        "description": {
+                                                            "type": "string"
+                                                        },
+                                                        "id": {
+                                                            "type": "string"
+                                                        },
+                                                        "lastActionDateTime": {
+                                                            "type": "string"
+                                                        },
+                                                        "locale": {
+                                                            "type": "string"
+                                                        },
+                                                        "modelKind": {
+                                                            "type": "string"
+                                                        },
+                                                        "name": {
+                                                            "type": "string"
+                                                        },
+                                                        "properties": {
+                                                            "properties": {
+                                                                "Purpose": {
+                                                                    "type": "string"
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        },
+                                                        "status": {
+                                                            "type": "string"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "type": "array"
+                                            },
+                                            "name": {
+                                                "type": "string"
+                                            },
+                                            "properties": {
+                                                "properties": {
+                                                    "Duration": {
+                                                        "type": "string"
+                                                    },
+                                                    "ProfanityFilterMode": {
+                                                        "type": "string"
+                                                    },
+                                                    "PunctuationMode": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            },
+                                            "recordingsUrl": {
+                                                "type": "string"
+                                            },
+                                            "resultsUrls": {
+                                                "properties": {
+                                                    "channel_0": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            },
+                                            "status": {
+                                                "type": "string"
+                                            },
+                                            "statusMessage": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "type": "object"
+                                    },
+                                    "type": "array"
+                                }
+                            }
+                        },
+                        "イベントの作成": {
+                            "runAfter": {
+                                "作成": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "ApiConnection",
+                            "inputs": {
+                                "body": {
+                                    "description": "@{variables('action')}（@{variables('name')}）音声で入力",
+                                    "end": "@{outputs('作成')}+09:00",
+                                    "location": "@variables('location')",
+                                    "start": "@{outputs('作成')}+09:00",
+                                    "summary": "[@{variables('time')}]@{variables('action')}（@{variables('location')}）"
+                                },
+                                "host": {
+                                    "connection": {
+                                        "name": "@parameters('$connections')['googlecalendar']['connectionId']"
+                                    }
+                                },
+                                "method": "post",
+                                "path": "/calendars/@{encodeURIComponent('メールアドレス')}/events"
+                            }
+                        },
+                        "作成": {
+                            "runAfter": {
+                                "For_each_5": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "Compose",
+                            "inputs": "@formatDateTime(variables('date'))"
+                        },
+                        "変数を初期化する(result)": {
+                            "runAfter": {
+                                "変数を初期化する（name）": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "InitializeVariable",
+                            "inputs": {
+                                "variables": [
+                                    {
+                                        "name": "result",
+                                        "type": "String"
+                                    }
+                                ]
+                            }
+                        },
+                        "変数を初期化する（action）": {
+                            "runAfter": {
+                                "変数を初期化する（time）": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "InitializeVariable",
+                            "inputs": {
+                                "variables": [
+                                    {
+                                        "name": "action",
+                                        "type": "String"
+                                    }
+                                ]
+                            }
+                        },
+                        "変数を初期化する（date）": {
+                            "runAfter": {},
+                            "type": "InitializeVariable",
+                            "inputs": {
+                                "variables": [
+                                    {
+                                        "name": "date",
+                                        "type": "String"
+                                    }
+                                ]
+                            }
+                        },
+                        "変数を初期化する（location）": {
+                            "runAfter": {
+                                "変数を初期化する（date）": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "InitializeVariable",
+                            "inputs": {
+                                "variables": [
+                                    {
+                                        "name": "location",
+                                        "type": "String"
+                                    }
+                                ]
+                            }
+                        },
+                        "変数を初期化する（name）": {
+                            "runAfter": {
+                                "変数を初期化する（action）": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "InitializeVariable",
+                            "inputs": {
+                                "variables": [
+                                    {
+                                        "name": "name",
+                                        "type": "String"
+                                    }
+                                ]
+                            }
+                        },
+                        "変数を初期化する（time）": {
+                            "runAfter": {
+                                "変数を初期化する（location）": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "InitializeVariable",
+                            "inputs": {
+                                "variables": [
+                                    {
+                                        "name": "time",
+                                        "type": "String"
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    "outputs": {}
+                },
+                "parameters": {
+                    "$connections": {
+                        "value": {
+                            "azureblob": {
+                                "connectionId": "[parameters('connections_azureblob_externalid')]",
+                                "connectionName": "azureblob",
+                                "id": "/subscriptions/[ご自身のサブスクリプションIDに変更]/providers/Microsoft.Web/locations/westcentralus/managedApis/azureblob"
+                            },
+                            "googlecalendar": {
+                                "connectionId": "[parameters('connections_googlecalendar_externalid')]",
+                                "connectionName": "googlecalendar",
+                                "id": "/subscriptions/[ご自身のサブスクリプションIDに変更]/providers/Microsoft.Web/locations/westcentralus/managedApis/googlecalendar"
+                            },
+                            "luis": {
+                                "connectionId": "[parameters('connections_luis_externalid')]",
+                                "connectionName": "luis",
+                                "id": "/subscriptions/[ご自身のサブスクリプションIDに変更]/providers/Microsoft.Web/locations/westcentralus/managedApis/luis"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    ]
+}
