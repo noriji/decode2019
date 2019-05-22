@@ -1,0 +1,409 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "workflows_line_message_schedule_name": {
+            "defaultValue": "line-message-schedule",
+            "type": "String"
+        },
+        "connections_googlecalendar_externalid": {
+            "defaultValue": "/subscriptions/[ご自身のサブスクリプションIDに変更]/resourceGroups/decode2019/providers/Microsoft.Web/connections/googlecalendar",
+            "type": "String"
+        },
+        "connections_luis_externalid": {
+            "defaultValue": "/subscriptions/[ご自身のサブスクリプションIDに変更]/resourceGroups/decode2019/providers/Microsoft.Web/connections/luis",
+            "type": "String"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Logic/workflows",
+            "apiVersion": "2017-07-01",
+            "name": "[parameters('workflows_line_message_schedule_name')]",
+            "location": "westcentralus",
+            "properties": {
+                "state": "Enabled",
+                "definition": {
+                    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "$connections": {
+                            "defaultValue": {},
+                            "type": "Object"
+                        }
+                    },
+                    "triggers": {
+                        "manual": {
+                            "type": "Request",
+                            "kind": "Http",
+                            "inputs": {
+                                "schema": {
+                                    "properties": {
+                                        "events": {
+                                            "items": {
+                                                "message": {
+                                                    "properties": {
+                                                        "address": {
+                                                            "type": "string"
+                                                        },
+                                                        "fileName": {
+                                                            "type": "string"
+                                                        },
+                                                        "fileSize": {
+                                                            "type": "number"
+                                                        },
+                                                        "id": {
+                                                            "type": "string"
+                                                        },
+                                                        "latitude": {
+                                                            "type": "number"
+                                                        },
+                                                        "longitude": {
+                                                            "type": "number"
+                                                        },
+                                                        "packageId": {
+                                                            "type": "string"
+                                                        },
+                                                        "stickerId": {
+                                                            "type": "string"
+                                                        },
+                                                        "text": {
+                                                            "type": "string"
+                                                        },
+                                                        "title": {
+                                                            "type": "string"
+                                                        },
+                                                        "type": {
+                                                            "type": "string"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "postback": {
+                                                    "properties": {
+                                                        "data": {
+                                                            "type": "string"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "properties": {
+                                                    "replyToken": {
+                                                        "type": "string"
+                                                    },
+                                                    "source": {
+                                                        "properties": {
+                                                            "groupId": {
+                                                                "type": "string"
+                                                            },
+                                                            "type": {
+                                                                "type": "string"
+                                                            },
+                                                            "userId": {
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    },
+                                                    "timestamp": {
+                                                        "type": "number"
+                                                    },
+                                                    "type": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            },
+                                            "type": "array"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "actions": {
+                        "For_each": {
+                            "foreach": "@triggerBody()?['events']",
+                            "actions": {
+                                "For_each_2": {
+                                    "foreach": "@body('Get_prediction')?['entities']",
+                                    "actions": {
+                                        "スイッチ": {
+                                            "runAfter": {},
+                                            "cases": {
+                                                "ケース": {
+                                                    "case": "date",
+                                                    "actions": {
+                                                        "変数の設定": {
+                                                            "runAfter": {},
+                                                            "type": "SetVariable",
+                                                            "inputs": {
+                                                                "name": "date",
+                                                                "value": "@items('For_each_2')?['entity']"
+                                                            }
+                                                        }
+                                                    }
+                                                },
+                                                "ケース_2": {
+                                                    "case": "location",
+                                                    "actions": {
+                                                        "変数の設定_2": {
+                                                            "runAfter": {},
+                                                            "type": "SetVariable",
+                                                            "inputs": {
+                                                                "name": "location",
+                                                                "value": "@items('For_each_2')?['entity']"
+                                                            }
+                                                        }
+                                                    }
+                                                },
+                                                "ケース_3": {
+                                                    "case": "time",
+                                                    "actions": {
+                                                        "変数の設定_3": {
+                                                            "runAfter": {},
+                                                            "type": "SetVariable",
+                                                            "inputs": {
+                                                                "name": "time",
+                                                                "value": "@items('For_each_2')?['entity']"
+                                                            }
+                                                        }
+                                                    }
+                                                },
+                                                "ケース_4": {
+                                                    "case": "action",
+                                                    "actions": {
+                                                        "変数の設定_4": {
+                                                            "runAfter": {},
+                                                            "type": "SetVariable",
+                                                            "inputs": {
+                                                                "name": "action",
+                                                                "value": "@items('For_each_2')?['entity']"
+                                                            }
+                                                        }
+                                                    }
+                                                },
+                                                "ケース_5": {
+                                                    "case": "name",
+                                                    "actions": {
+                                                        "変数の設定_5": {
+                                                            "runAfter": {},
+                                                            "type": "SetVariable",
+                                                            "inputs": {
+                                                                "name": "name",
+                                                                "value": "@items('For_each_2')?['entity']"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            "default": {
+                                                "actions": {}
+                                            },
+                                            "expression": "@items('For_each_2')?['type']",
+                                            "type": "Switch"
+                                        }
+                                    },
+                                    "runAfter": {
+                                        "Get_prediction": [
+                                            "Succeeded"
+                                        ]
+                                    },
+                                    "type": "Foreach",
+                                    "runtimeConfiguration": {
+                                        "concurrency": {
+                                            "repetitions": 1
+                                        }
+                                    }
+                                },
+                                "Get_prediction": {
+                                    "runAfter": {},
+                                    "type": "ApiConnection",
+                                    "inputs": {
+                                        "host": {
+                                            "connection": {
+                                                "name": "@parameters('$connections')['luis']['connectionId']"
+                                            }
+                                        },
+                                        "method": "get",
+                                        "path": "/luis/v2.0/apps/@{encodeURIComponent('[LUISのAPI Key]')}/",
+                                        "queries": {
+                                            "desiredIntent": "Plans",
+                                            "q": "@items('for_each')?['message']?['text']",
+                                            "verbose": true,
+                                            "versionId": "0.1"
+                                        }
+                                    }
+                                },
+                                "HTTP": {
+                                    "runAfter": {
+                                        "イベントの作成": [
+                                            "Succeeded"
+                                        ]
+                                    },
+                                    "type": "Http",
+                                    "inputs": {
+                                        "body": {
+                                            "messages": [
+                                                {
+                                                    "text": "スケジュール登録しました",
+                                                    "type": "text"
+                                                }
+                                            ],
+                                            "replyToken": "@items('For_each')?['replyToken']"
+                                        },
+                                        "headers": {
+                                            "Authorization": "[Bearer情報が入ります]",
+                                            "Content-Type": "application/json"
+                                        },
+                                        "method": "POST",
+                                        "uri": "https://api.line.me/v2/bot/message/reply"
+                                    }
+                                },
+                                "イベントの作成": {
+                                    "runAfter": {
+                                        "作成": [
+                                            "Succeeded"
+                                        ]
+                                    },
+                                    "type": "ApiConnection",
+                                    "inputs": {
+                                        "body": {
+                                            "description": "@{variables('action')}（@{variables('name')}）",
+                                            "end": "@{outputs('作成')}+09:00",
+                                            "location": "@variables('location')",
+                                            "start": "@{outputs('作成')}+09:00",
+                                            "summary": "[@{variables('time')}]@{variables('action')}（@{variables('location')}）"
+                                        },
+                                        "host": {
+                                            "connection": {
+                                                "name": "@parameters('$connections')['googlecalendar']['connectionId']"
+                                            }
+                                        },
+                                        "method": "post",
+                                        "path": "/calendars/@{encodeURIComponent('メールアドレス')}/events"
+                                    }
+                                },
+                                "作成": {
+                                    "runAfter": {
+                                        "For_each_2": [
+                                            "Succeeded"
+                                        ]
+                                    },
+                                    "type": "Compose",
+                                    "inputs": "@formatDateTime(variables('date'))"
+                                }
+                            },
+                            "runAfter": {
+                                "変数を初期化する(name)": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "Foreach",
+                            "runtimeConfiguration": {
+                                "concurrency": {
+                                    "repetitions": 1
+                                }
+                            }
+                        },
+                        "変数を初期化する(action)": {
+                            "runAfter": {
+                                "変数を初期化する(time)": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "InitializeVariable",
+                            "inputs": {
+                                "variables": [
+                                    {
+                                        "name": "action",
+                                        "type": "String"
+                                    }
+                                ]
+                            }
+                        },
+                        "変数を初期化する(date)": {
+                            "runAfter": {},
+                            "type": "InitializeVariable",
+                            "inputs": {
+                                "variables": [
+                                    {
+                                        "name": "date",
+                                        "type": "String"
+                                    }
+                                ]
+                            }
+                        },
+                        "変数を初期化する(location)": {
+                            "runAfter": {
+                                "変数を初期化する(date)": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "InitializeVariable",
+                            "inputs": {
+                                "variables": [
+                                    {
+                                        "name": "location",
+                                        "type": "String"
+                                    }
+                                ]
+                            }
+                        },
+                        "変数を初期化する(name)": {
+                            "runAfter": {
+                                "変数を初期化する(action)": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "InitializeVariable",
+                            "inputs": {
+                                "variables": [
+                                    {
+                                        "name": "name",
+                                        "type": "String"
+                                    }
+                                ]
+                            }
+                        },
+                        "変数を初期化する(time)": {
+                            "runAfter": {
+                                "変数を初期化する(location)": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "InitializeVariable",
+                            "inputs": {
+                                "variables": [
+                                    {
+                                        "name": "time",
+                                        "type": "String"
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    "outputs": {}
+                },
+                "parameters": {
+                    "$connections": {
+                        "value": {
+                            "googlecalendar": {
+                                "connectionId": "[parameters('connections_googlecalendar_externalid')]",
+                                "connectionName": "googlecalendar",
+                                "id": "/subscriptions/[ご自身のサブスクリプションIDに変更]/providers/Microsoft.Web/locations/westcentralus/managedApis/googlecalendar"
+                            },
+                            "luis": {
+                                "connectionId": "[parameters('connections_luis_externalid')]",
+                                "connectionName": "luis",
+                                "id": "/subscriptions/[ご自身のサブスクリプションIDに変更]/providers/Microsoft.Web/locations/westcentralus/managedApis/luis"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    ]
+}
