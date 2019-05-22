@@ -12,8 +12,9 @@ Logic AppsとCognitive ServicesのLUIS（Language Understanding）やSpeech to t
 
 [[AI91]ノン コーディングで LINE Bot 開発! Azure Logic Apps × Azure Cognitive Services × LINE メッセージで自動スケジュール登録](https://www.microsoft.com/ja-jp/events/decode/2019session/detail.aspx?sid=AI91)
 
-1. LINEメッセージ（テキスト）で送信するスケジュール内容をGoogleカレンダーに自動入力するChat Bot
-2. LINEボイスメッセージ（音声）で送信するスケジュール内容をGoogleカレンダーに自動入力するChat Bot
+1. [LINEメッセージ（テキスト）で送信するスケジュール内容をGoogleカレンダーに自動入力するChat Bot](https://github.com/noriji/decode2019/tree/master/sample01)
+2. [LINEボイスメッセージ（音声）で送信するスケジュール内容をGoogleカレンダーに自動入力するChat Bot](https://github.com/noriji/decode2019/tree/master/sample02)
+3. [サンプルのLogic Apps（jsonデータ）を利用する手順](https://github.com/noriji/decode2019/LogicApp-add-template.md)
 
 ## お問い合わせ先
 
