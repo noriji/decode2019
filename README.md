@@ -14,7 +14,7 @@ Logic AppsとCognitive ServicesのLUIS（Language Understanding）やSpeech to t
 
 1. [LINEメッセージ（テキスト）で送信するスケジュール内容をGoogleカレンダーに自動入力するChat Bot](https://github.com/noriji/decode2019/tree/master/sample01)
 2. [LINEボイスメッセージ（音声）で送信するスケジュール内容をGoogleカレンダーに自動入力するChat Bot](https://github.com/noriji/decode2019/tree/master/sample02)
-3. [サンプルのLogic Apps（jsonデータ）を利用する手順](https://github.com/noriji/decode2019/LogicApp-add-template.md)
+3. [サンプルのLogic Apps（jsonデータ）を利用する手順](https://github.com/noriji/decode2019/blob/master/LogicApp-add-template.md)
 
 ## お問い合わせ先
 
